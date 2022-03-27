@@ -26,6 +26,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintBottom_toTopOf="@id/date_tv"
             app:layout_constraintRight_toLeftOf="@id/time_tv"
+            android:maxLines="1"
+            android:ellipsize="end"
             />
         <TextView
             android:layout_margin="5dp"

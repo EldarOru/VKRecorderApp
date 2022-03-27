@@ -5,9 +5,10 @@ import com.example.vkrecorderapp.domain.repositories.NoteRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetNotesUseCase @Inject constructor(
-    private val noteRepository: NoteRepository) {
-    suspend operator fun invoke(): Flow<List<AudioNote>> {
-        return noteRepository.getNotes()
+class GetNoteByIdUseCase @Inject constructor(
+    private val noteRepository: NoteRepository
+) {
+    suspend operator fun invoke(id: Int): Flow<AudioNote> {
+        return noteRepository.getNoteById(id)
     }
 }

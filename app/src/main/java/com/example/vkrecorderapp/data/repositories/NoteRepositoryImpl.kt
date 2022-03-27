@@ -9,7 +9,7 @@ import javax.inject.Inject
 class NoteRepositoryImpl @Inject constructor(
     private val noteDao: NoteDao): NoteRepository {
 
-    override fun getNotes(): Flow<List<AudioNote>> {
+    override suspend fun getNotes(): Flow<List<AudioNote>> {
         return noteDao.getNotes()
     }
 
@@ -23,5 +23,9 @@ class NoteRepositoryImpl @Inject constructor(
 
     override suspend fun deleteNote(audioNote: AudioNote) {
         noteDao.deleteNote(audioNote)
+    }
+
+    override suspend fun getNoteById(id: Int): Flow<AudioNote> {
+        return noteDao.getNoteById(id)
     }
 }

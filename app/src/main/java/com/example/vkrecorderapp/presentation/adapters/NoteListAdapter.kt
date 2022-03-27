@@ -13,6 +13,8 @@ class NoteListAdapter: RecyclerView.Adapter<NoteListAdapter.NoteListHolder>() {
     var onPlayClickListener: ((AudioNote) -> (Unit))? = null
     var onStopClickListener: ((AudioNote) -> (Unit))? = null
 
+    var onLongClickListener: ((AudioNote) -> (Unit))? = null
+
     var notesList = listOf<AudioNote>()
         set(value) {
             field = value
@@ -36,7 +38,12 @@ class NoteListAdapter: RecyclerView.Adapter<NoteListAdapter.NoteListHolder>() {
         val playButton: ImageView = holder.noteView.playButton
         playButton.setOnClickListener {
             onPlayClickListener?.invoke(note)
-            playButton.setImageResource(R.drawable.ic_baseline_stop_24)
+            //playButton.setImageResource(R.drawable.ic_baseline_stop_24)
+        }
+
+        holder.noteView.root.setOnLongClickListener {
+            onLongClickListener?.invoke(note)
+            true
         }
     }
 
