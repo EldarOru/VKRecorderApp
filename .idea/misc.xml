@@ -3,6 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/macdo/AndroidStudioProjects/VKRecorderApp/app/src/main/res/drawable/bot_round_angles.xml" value="0.121" />
+        <entry key="..\:/Users/macdo/AndroidStudioProjects/VKRecorderApp/app/src/main/res/drawable/ic_baseline_pause_24.xml" value="0.162" />
+        <entry key="..\:/Users/macdo/AndroidStudioProjects/VKRecorderApp/app/src/main/res/drawable/ic_baseline_pause_black_24.xml" value="0.162" />
+        <entry key="..\:/Users/macdo/AndroidStudioProjects/VKRecorderApp/app/src/main/res/drawable/ic_baseline_play_arrow_24.xml" value="0.162" />
+        <entry key="..\:/Users/macdo/AndroidStudioProjects/VKRecorderApp/app/src/main/res/drawable/round_cornes.xml" value="0.121" />
+        <entry key="..\:/Users/macdo/AndroidStudioProjects/VKRecorderApp/app/src/main/res/drawable/top_round_angles.xml" value="0.121" />
         <entry key="..\:/Users/macdo/AndroidStudioProjects/VKRecorderApp/app/src/main/res/layout/activity_main.xml" value="0.15885416666666666" />
         <entry key="..\:/Users/macdo/AndroidStudioProjects/VKRecorderApp/app/src/main/res/layout/fragment_detailed_note.xml" value="0.264" />
         <entry key="..\:/Users/macdo/AndroidStudioProjects/VKRecorderApp/app/src/main/res/layout/fragment_main_list.xml" value="0.2" />

@@ -9,12 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.vkrecorderapp.databinding.FragmentDetailedNoteBinding
 import com.example.vkrecorderapp.domain.entities.AudioNote
 import com.example.vkrecorderapp.presentation.viewmodels.DetailedNoteViewModel
+import com.example.vkrecorderapp.utils.TimeConverter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -78,6 +80,7 @@ class DetailedNoteFragment : Fragment() {
                 it.let {
                     detailedNoteBinding?.descriptionEt?.setText(it.description)
                     detailedNoteBinding?.dateTv?.text = it.date
+                    detailedNoteBinding?.duration?.text = it.duration
                 }
             }
         }
@@ -121,6 +124,8 @@ class DetailedNoteFragment : Fragment() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 if (fromUser){
                     player?.seekTo(progress)
+                    detailedNoteBinding?.currentDuration?.text =
+                    player?.currentPosition?.toLong()?.let { TimeConverter.convertTime(it) }
                 }
             }
 
@@ -140,6 +145,18 @@ class DetailedNoteFragment : Fragment() {
             override fun run() {
                 try {
                     detailedNoteBinding?.seekBar?.progress = player?.currentPosition ?: 0
+                    detailedNoteBinding?.currentDuration?.text =
+                        player?.currentPosition?.toLong()?.let { TimeConverter.convertTime(it) }
+
+                    if ( detailedNoteBinding?.seekBar?.progress == player?.duration){
+                        player?.apply {
+                            stop()
+                            reset()
+                            release()
+                        }
+                        player = null
+                        isPlaying = false
+                    }
                     handler.postDelayed(this, 1000)
                 }catch (e: IOException){
                     detailedNoteBinding?.seekBar?.progress = 0

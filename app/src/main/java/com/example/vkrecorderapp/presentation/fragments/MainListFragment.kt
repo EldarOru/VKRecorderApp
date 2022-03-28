@@ -3,6 +3,8 @@ package com.example.vkrecorderapp.presentation.fragments
 import android.content.Context
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +20,7 @@ import com.example.vkrecorderapp.databinding.FragmentMainListBinding
 import com.example.vkrecorderapp.domain.entities.AudioNote
 import com.example.vkrecorderapp.presentation.adapters.NoteListAdapter
 import com.example.vkrecorderapp.presentation.viewmodels.MainListViewModel
+import com.example.vkrecorderapp.utils.TimeConverter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -127,7 +130,7 @@ class MainListFragment : Fragment() {
         } catch (e: IOException) {
             Log.e("TAG", "player failed")
         }
-
+        initDuration(audioNote)
         mainListFragmentBinding?.playingTv?.text = "Playing now: ${audioNote.description}"
         mainListFragmentBinding?.playingButton?.setImageResource(R.drawable.ic_baseline_play_arrow_24)
     }
@@ -169,6 +172,32 @@ class MainListFragment : Fragment() {
         }
         val itemTouchHelper = ItemTouchHelper(myCallBack)
         itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
+
+    private fun initDuration(audioNote: AudioNote){
+        mainListFragmentBinding?.duration?.text = audioNote.duration
+
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed(object: Runnable{
+            override fun run() {
+                try {
+                    mainListFragmentBinding?.currentDuration?.text =
+                        player?.currentPosition?.toLong()?.let { TimeConverter.convertTime(it) }
+
+                    handler.postDelayed(this, 1000)
+                }catch (e: IOException){
+                    mainListFragmentBinding?.currentDuration?.text = "0"
+                }
+            }
+        }, 0)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mainListFragmentBinding?.apply {
+            duration.text = getString(R.string.nulls)
+            separate.text = getString(R.string.separate)
+        }
     }
 
     companion object{

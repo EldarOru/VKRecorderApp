@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
+    android:background="@color/white"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,7 +8,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.activities.MainActivity">
 
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:background="@drawable/top_round_angles"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.activities.MainActivity">
+
     <Chronometer
+        android:textColor="@color/white"
         android:id="@+id/chronometer"
         android:layout_margin="10dp"
         android:textSize="44sp"
@@ -18,6 +26,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
     <Button
+
+        android:layout_margin="5dp"
+        android:textColor="@color/white"
+        android:background="@drawable/button_style"
         android:text="@string/clicktorecord"
         android:id="@+id/record_button"
         android:layout_width="match_parent"
@@ -28,3 +40,5 @@
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

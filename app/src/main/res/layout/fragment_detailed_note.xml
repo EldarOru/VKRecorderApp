@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
+    android:background="@color/white"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,17 +11,21 @@
         android:id="@+id/edit_scroll_view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/date_tv"
+        app:layout_constraintBottom_toTopOf="@id/play_image"
+        app:layout_constraintTop_toTopOf="parent"
         android:layout_width="0dp"
         android:layout_height="100dp">
         <EditText
+            android:textColor="@color/black"
+            android:gravity="center"
             android:id="@+id/description_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
     </ScrollView>
 
-
     <TextView
+        style="@style/textView"
+        android:textColor="@color/black"
         android:gravity="center"
         android:text="CHECK"
         android:id="@+id/date_tv"
@@ -28,8 +33,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/play_image"/>
+        app:layout_constraintBottom_toTopOf="@id/edit_scroll_view"/>
 
     <ImageView
         android:src="@drawable/ic_baseline_play_arrow_24"
@@ -63,6 +67,41 @@
         app:layout_constraintTop_toBottomOf="@id/date_tv"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="20dp"/>
+
+    <LinearLayout
+        android:id="@+id/time_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/play_image"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/textView"
+            android:textColor="@color/black"
+            android:id="@+id/current_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textColor="@color/black"
+            android:id="@+id/separate"
+            style="@style/textView"
+            android:text="@string/separate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textColor="@color/black"
+            style="@style/textView"
+            android:text="@string/nulls"
+            android:id="@+id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
     <SeekBar
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
@@ -71,6 +110,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/play_image"/>
+        app:layout_constraintTop_toBottomOf="@id/time_layout"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

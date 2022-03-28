@@ -5,4 +5,6 @@
     <string name="clicktorecord">Click to record</string>
     <string name="recording">Recording...</string>
     <string name="player">Player</string>
+    <string name="separate">/</string>
+    <string name="nulls">00:00</string>
 </resources>
