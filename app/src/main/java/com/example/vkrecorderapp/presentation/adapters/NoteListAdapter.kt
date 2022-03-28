@@ -4,16 +4,13 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.vkrecorderapp.R
 import com.example.vkrecorderapp.databinding.NoteItemBinding
 import com.example.vkrecorderapp.domain.entities.AudioNote
 
 class NoteListAdapter: RecyclerView.Adapter<NoteListAdapter.NoteListHolder>() {
 
     var onPlayClickListener: ((AudioNote) -> (Unit))? = null
-    var onStopClickListener: ((AudioNote) -> (Unit))? = null
-
-    var onLongClickListener: ((AudioNote) -> (Unit))? = null
+    var onClickListener: ((AudioNote) -> (Unit))? = null
 
     var notesList = listOf<AudioNote>()
         set(value) {
@@ -33,17 +30,16 @@ class NoteListAdapter: RecyclerView.Adapter<NoteListAdapter.NoteListHolder>() {
         holder.noteView.apply {
             descriptionTv.text = note.description
             dateTv.text = note.date
+            timeTv.text = note.duration
         }
 
         val playButton: ImageView = holder.noteView.playButton
         playButton.setOnClickListener {
             onPlayClickListener?.invoke(note)
-            //playButton.setImageResource(R.drawable.ic_baseline_stop_24)
         }
 
-        holder.noteView.root.setOnLongClickListener {
-            onLongClickListener?.invoke(note)
-            true
+        holder.noteView.root.setOnClickListener {
+            onClickListener?.invoke(note)
         }
     }
 

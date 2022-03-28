@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.vkrecorderapp.data.database.NoteDatabase
 import com.example.vkrecorderapp.data.repositories.NoteRepositoryImpl
 import com.example.vkrecorderapp.domain.repositories.NoteRepository
+import com.example.vkrecorderapp.domain.usecases.DeleteNoteUseCase
 import com.example.vkrecorderapp.domain.usecases.GetNotesUseCase
 import com.example.vkrecorderapp.domain.usecases.InsertNoteUseCase
 import dagger.Module
@@ -43,5 +44,10 @@ object DatabaseModule {
     @Provides
     fun provideInsertQuoteDatabaseUseCase(rep: NoteRepository): InsertNoteUseCase{
         return InsertNoteUseCase(rep)
+    }
+
+    @Provides
+    fun provideDeleteNoteUseCase(rep: NoteRepository): DeleteNoteUseCase{
+        return DeleteNoteUseCase(rep)
     }
 }

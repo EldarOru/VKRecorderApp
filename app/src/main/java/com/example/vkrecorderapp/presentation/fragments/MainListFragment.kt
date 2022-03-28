@@ -10,13 +10,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.vkrecorderapp.R
 import com.example.vkrecorderapp.databinding.FragmentMainListBinding
+import com.example.vkrecorderapp.domain.entities.AudioNote
 import com.example.vkrecorderapp.presentation.adapters.NoteListAdapter
 import com.example.vkrecorderapp.presentation.viewmodels.MainListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.io.File
 import java.io.IOException
 import java.lang.RuntimeException
 
@@ -28,6 +33,7 @@ class MainListFragment : Fragment() {
     private var mainListFragmentBinding: FragmentMainListBinding? = null
     private var player: MediaPlayer? = null
     private var isPlaying = false
+    private var playingNoteId = UNDEFINED_PLAYING_ID
     private val mainListViewModel: MainListViewModel by viewModels()
 
     override fun onAttach(context: Context) {
@@ -52,37 +58,40 @@ class MainListFragment : Fragment() {
         setRecyclerView()
         setListeners()
         setData()
+    }
 
+    override fun onStop() {
+        super.onStop()
+        if (player != null && isPlaying) {
+            finishPlaying()
+        }
     }
 
     private fun setListeners(){
-        notesListAdapter.onLongClickListener = {
+        notesListAdapter.onClickListener = {
             onFragmentsInteractionsListener.onAddBackStack(it.storagePath, DetailedNoteFragment.newInstance(
                 it.id!!
             ))
         }
 
         notesListAdapter.onPlayClickListener = {
-            if(isPlaying){
-                player?.apply {
-                    stop()
-                    reset()
-                    release()
-                }
-                isPlaying = false
+            if (player != null && !isPlaying) {
+                startPlaying(it)
             }else{
-                player = MediaPlayer()
+                finishPlaying()
+                startPlaying(it)
+            }
+        }
 
-                try {
-                    player?.apply {
-                        setDataSource(it.storagePath)
-                        prepare()
-                        start()
-                    }
+        mainListFragmentBinding?.playingButton?.setOnClickListener {
+            if (player != null && isPlaying) {
+                player?.pause()
+                isPlaying = false
+                mainListFragmentBinding?.playingButton?.setImageResource(R.drawable.ic_baseline_pause_24)
+            }else{
+                player?.start()
                 isPlaying = true
-                }catch (e: IOException){
-                    Log.e("TAG", "player failed")
-                }
+                mainListFragmentBinding?.playingButton?.setImageResource(R.drawable.ic_baseline_play_arrow_24)
             }
         }
     }
@@ -92,6 +101,7 @@ class MainListFragment : Fragment() {
         recyclerView?.layoutManager = LinearLayoutManager(context)
         notesListAdapter = NoteListAdapter()
         recyclerView?.adapter = notesListAdapter
+        setupSwipeListener(recyclerView as RecyclerView)
     }
 
     private fun setData(){
@@ -102,6 +112,67 @@ class MainListFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun startPlaying(audioNote: AudioNote){
+        player = MediaPlayer()
+        try {
+            player?.apply {
+                setDataSource(audioNote.storagePath)
+                prepare()
+                start()
+            }
+            isPlaying = true
+            playingNoteId = audioNote.id ?: -1
+        } catch (e: IOException) {
+            Log.e("TAG", "player failed")
+        }
+
+        mainListFragmentBinding?.playingTv?.text = "Playing now: ${audioNote.description}"
+        mainListFragmentBinding?.playingButton?.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+    }
+
+    private fun finishPlaying(){
+        player?.apply {
+            stop()
+            reset()
+            release()
+        }
+        player = null
+        isPlaying = false
+    }
+
+    private fun setupSwipeListener(recyclerView: RecyclerView) {
+        val myCallBack = object : ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.RIGHT or ItemTouchHelper.LEFT) {
+            override fun onMove(recyclerView: RecyclerView,
+                                viewHolder: RecyclerView.ViewHolder,
+                                target: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                if (direction == ItemTouchHelper.LEFT || direction == ItemTouchHelper.RIGHT){
+                    val item = notesListAdapter.notesList[viewHolder.adapterPosition]
+                    if (playingNoteId == item.id){
+                        finishPlaying()
+                        mainListFragmentBinding?.playingTv?.text = getString(R.string.player)
+                        mainListFragmentBinding?.playingButton?.setImageResource(R.drawable.ic_baseline_play_arrow_24)
+                    }
+                    val file = File(item.storagePath)
+                    if (file.exists()){
+                        file.delete()
+                    }
+                    mainListViewModel.deleteNote(item)
+                }
+            }
+        }
+        val itemTouchHelper = ItemTouchHelper(myCallBack)
+        itemTouchHelper.attachToRecyclerView(recyclerView)
+    }
+
+    companion object{
+        private const val UNDEFINED_PLAYING_ID = -1
     }
 }
 

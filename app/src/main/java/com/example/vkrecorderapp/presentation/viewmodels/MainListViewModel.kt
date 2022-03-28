@@ -3,6 +3,7 @@ package com.example.vkrecorderapp.presentation.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vkrecorderapp.domain.entities.AudioNote
+import com.example.vkrecorderapp.domain.usecases.DeleteNoteUseCase
 import com.example.vkrecorderapp.domain.usecases.GetNotesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainListViewModel @Inject constructor(
-    private val getNotesUseCase: GetNotesUseCase): ViewModel() {
+    private val getNotesUseCase: GetNotesUseCase,
+    private val deleteNoteUseCase: DeleteNoteUseCase): ViewModel() {
 
     init {
         getNotes()
@@ -31,6 +33,12 @@ class MainListViewModel @Inject constructor(
                 .collect {
                     _notesState.value = it
                 }
+        }
+    }
+
+    fun deleteNote(audioNote: AudioNote) {
+        viewModelScope.launch(Dispatchers.IO) {
+            deleteNoteUseCase.invoke(audioNote)
         }
     }
 }

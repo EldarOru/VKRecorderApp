@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.os.SystemClock
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,14 +14,17 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.vkrecorderapp.R
 import com.example.vkrecorderapp.databinding.FragmentRecordBinding
 import com.example.vkrecorderapp.domain.entities.AudioNote
 import com.example.vkrecorderapp.presentation.viewmodels.RecordViewModel
+import com.example.vkrecorderapp.utils.TimeConverter
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 
 @AndroidEntryPoint
@@ -91,7 +93,7 @@ class RecordFragment : Fragment() {
             setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
             setOutputFile(fileName)
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-
+            setMaxDuration(10000000)
             try {
                 prepare()
                 start()
@@ -105,18 +107,26 @@ class RecordFragment : Fragment() {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun stopRecording(){
+    private fun stopRecording() {
         recorder?.apply {
             stop()
             release()
         }
         recorder = null
+        recordFragmentBinding?.chronometer?.stop()
         val sdf = SimpleDateFormat("dd/MM/yyyy hh:mm:ss")
+        sdf.timeZone = TimeZone.getDefault()
+
         val currentDate = sdf.format(Date())
-        val audioNote = AudioNote(date = currentDate, description = "New Audio", storagePath = fileName)
+        val millis = SystemClock.elapsedRealtime() - (recordFragmentBinding?.chronometer?.base ?: 0)
+        val audioNote =
+            AudioNote(date = currentDate,
+                description = "New Audio",
+                storagePath = fileName,
+                duration = TimeConverter.convertTime(millis = millis))
         recordViewModel.insertNote(audioNote)
         isRecording = false
-        recordFragmentBinding?.chronometer?.stop()
+
     }
 
     private fun setListeners() {

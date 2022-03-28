@@ -54,15 +54,22 @@ class DetailedNoteFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-
-        if (detailedNoteBinding?.descriptionEt?.text?.isNotEmpty() == true){
-            val audioNote = AudioNote(noteId,
-                detailedNoteBinding?.descriptionEt?.text.toString(),
-                detailedNoteViewModel.noteState.value.date,
-                detailedNoteViewModel.noteState.value.storagePath
-            )
-            detailedNoteViewModel.updateNote(audioNote)
+        if (player != null && isPlaying) {
+            player?.apply {
+                stop()
+                reset()
+                release()
+            }
+            player = null
+            isPlaying = false
         }
+        val audioNote = AudioNote(noteId,
+            detailedNoteBinding?.descriptionEt?.text.toString(),
+            detailedNoteViewModel.noteState.value.date,
+            detailedNoteViewModel.noteState.value.storagePath,
+            detailedNoteViewModel.noteState.value.duration)
+        detailedNoteViewModel.updateNote(audioNote)
+
     }
 
     private fun setData(){
@@ -80,9 +87,11 @@ class DetailedNoteFragment : Fragment() {
         detailedNoteBinding?.playImage?.setOnClickListener {
             if (!isPlaying && player == null){
                 player = MediaPlayer()
-                player?.setDataSource(detailedNoteViewModel.noteState.value.storagePath)
-                player?.prepare()
-                player?.start()
+                player?.apply{
+                    setDataSource(detailedNoteViewModel.noteState.value.storagePath)
+                    prepare()
+                    start()
+                }
                 initSeekBar()
                 isPlaying = true
             }else if (!isPlaying && player != null){
@@ -139,6 +148,7 @@ class DetailedNoteFragment : Fragment() {
         }, 0)
 
     }
+
 
     companion object {
         @JvmStatic

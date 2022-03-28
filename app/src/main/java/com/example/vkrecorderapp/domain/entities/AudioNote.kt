@@ -9,5 +9,6 @@ data class AudioNote(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
     val description: String = "",
     val date: String = "",
-    @ColumnInfo(name = "storage_path") val storagePath: String = ""
+    @ColumnInfo(name = "storage_path") val storagePath: String = "",
+    val duration: String = ""
 )
